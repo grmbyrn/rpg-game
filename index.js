@@ -1,9 +1,16 @@
+    // import characterData from "./data"
+    
+    function getDiceRollArray(diceCount){
+        return new Array(diceCount).fill(0).map(num => {
+            return Math.floor(Math.random() * 6) + 1
+        })
+    }
+
     const hero = {
         elementId: 'hero',
         name: 'Wizard',
         avatar: 'images/wizard.png',
         health: 60,
-        diceRoll: [3, 1, 4],
         diceCount: 3
     }
 
@@ -12,27 +19,35 @@
         name: 'Orc',
         avatar: 'images/orc.png',
         health: 10,
-        diceRoll: [6],
         diceCount: 1
     }
 
-    function renderCharacter(data){
-        const {elementId, name, avatar, health, diceRoll, diceCount} = data
+    function Character(data){
+        Object.assign(this, data)
 
-        const diceHtml = diceRoll.map(die => {
-            return `<div class='dice'>${die}</div>`
-        }).join('')
+        this.getDiceHtml = function(diceCount){
+            return getDiceRollArray(diceCount).map(num => {
+                return `<div class="dice">${num}</div>`
+            }).join('')
+        }
 
-        document.getElementById(elementId).innerHTML = 
-            `<div class="character-card">
-                <h4 class="name"> ${name} </h4>
-                <img class="avatar" src="${avatar}"/>
-                <div class="health">health: <b> ${health} </b></div>
-                <div class="dice-container">
-                    ${diceHtml}
-                </div>
-            </div>`
+        this.getCharacterHtml = function(){
+            const {elementId, name, avatar, health, diceCount} = this
+            const diceHtml = this.getDiceHtml(diceCount)
+
+            return`<div class="character-card">
+                    <h4 class="name"> ${name} </h4>
+                    <img class="avatar" src="${avatar}"/>
+                    <div class="health">health: <b> ${health} </b></div>
+                    <div class="dice-container">
+                        ${diceHtml}
+                    </div>
+                </div>`
+        }
     }
 
-    renderCharacter(hero)
-    renderCharacter(monster)
+    const wizard = new Character(hero)
+    document.getElementById(wizard.elementId).innerHTML = wizard.getCharacterHtml()
+
+    const orc = new Character(monster)
+    document.getElementById(orc.elementId).innerHTML = orc.getCharacterHtml()
